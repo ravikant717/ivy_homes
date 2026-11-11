@@ -16,12 +16,13 @@ export async function fetchIvyRaw(
     accessToken: string,
     options: RequestInit = {}
 ): Promise<Response> {
-    const baseUrl = getIvyBaseUrl();
+    const baseUrl = getIvyBaseUrl().replace(/\/+$/, "");
     const apiKey = getIvyApiKey();
 
+    const cleanPath = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
     const targetUrl = pathOrUrl.startsWith("http")
         ? pathOrUrl
-        : `${baseUrl}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+        : `${baseUrl}${cleanPath}`;
 
     const headers = new Headers(options.headers || {});
     headers.set("Authorization", `Bearer ${accessToken}`);
@@ -195,8 +196,9 @@ export async function proxyIvyApi(
 ): Promise<NextResponse> {
     try {
         const { searchParams } = new URL(request.url);
-        const baseUrl = getIvyBaseUrl();
-        const apiUrl = new URL(`${baseUrl}${endpointPath.startsWith("/") ? "" : "/"}${endpointPath}`);
+        const baseUrl = getIvyBaseUrl().replace(/\/+$/, "");
+        const cleanEndpoint = endpointPath.startsWith("/") ? endpointPath : `/${endpointPath}`;
+        const apiUrl = new URL(`${baseUrl}${cleanEndpoint}`);
 
         searchParams.forEach((value, key) => {
             if (!value) return;

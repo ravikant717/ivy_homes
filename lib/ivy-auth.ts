@@ -9,7 +9,7 @@ export const ACCESS_TOKEN_MAX_AGE = 60 * 60 * 24 * 30;
 export const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30;
 
 export function getIvyBaseUrl(): string {
-    return process.env.IVY_BASE_URL || "https://solve.ivy.homes";
+    return (process.env.IVY_BASE_URL || "https://solve.ivy.homes").replace(/\/+$/, "");
 }
 
 export function getIvyApiKey(): string {
@@ -107,7 +107,9 @@ export function setIvyAuthCookies(
         refreshToken?: string | null;
     }
 ): void {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction =
+        process.env.NODE_ENV === "production" &&
+        Boolean(process.env.NEXT_PUBLIC_APP_URL?.startsWith("https"));
 
     if (tokens.accessToken) {
         response.cookies.set(
@@ -142,7 +144,9 @@ export function setIvyAuthCookies(
  * Clears Ivy authentication cookies on a NextResponse.
  */
 export function clearIvyAuthCookies(response: NextResponse): void {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction =
+        process.env.NODE_ENV === "production" &&
+        Boolean(process.env.NEXT_PUBLIC_APP_URL?.startsWith("https"));
     const clearOptions = {
         httpOnly: true,
         secure: isProduction,

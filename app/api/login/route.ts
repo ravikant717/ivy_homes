@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const baseUrl = getIvyBaseUrl();
+        const baseUrl = getIvyBaseUrl().replace(/\/+$/, "");
         const apiKey = getIvyApiKey();
 
         const response = await fetch(`${baseUrl}/auth/login`, {

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
         // Optionally notify upstream /auth/logout if token is present
         if (accessToken) {
-            const baseUrl = getIvyBaseUrl();
+            const baseUrl = getIvyBaseUrl().replace(/\/+$/, "");
             const apiKey = getIvyApiKey();
             try {
                 await fetch(`${baseUrl}/auth/logout`, {
